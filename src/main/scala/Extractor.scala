@@ -1,5 +1,5 @@
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
-import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.functions.{broadcast, col}
 import util.{OsmReader, SparkConnection}
 
 object Extractor extends SparkConnection {
@@ -17,7 +17,13 @@ object Extractor extends SparkConnection {
 
     // ids for test
     val ids: Seq[Long] = Seq(
-      85606, // Ростовская область
+        85606, // Ростовская область
+      2099216, // Мурманская область
+        72223, // Курская область
+        77669, // Оренбургская область
+      1043206, // Печенгский муниципальный округ
+      1515337, // городской округ Донецк
+      4817134, // городское поселение Заветы Ильича
       0
     )
 
@@ -37,8 +43,10 @@ object Extractor extends SparkConnection {
     val resWays  = OsmReader.waysExplode(ways.select(col("ID"), col("TYPE"), col("WAY")), resRels.select(col("RELATION_ID")).as[Long].collect.toSeq)
       .repartition(1).sortWithinPartitions("WAY_ID", "NODE_POS")
 
-    val resNodes = OsmReader.nodes(nodes.select(col("ID"), col("TYPE"), col("LON"), col("LAT")), resWays.select(col("WAY_ID")).as[Long].collect.toSeq)
-      .repartition(1).sortWithinPartitions("ID")
+    val resNodes = OsmReader.nodes(nodes.select(col("ID"), col("TYPE"), col("LON"), col("LAT"))).as("n")
+      .join(broadcast(resWays).as("w"), col("n.ID") === col("w.NODE_ID"), "inner")
+      .select(col("w.WAY_ID"), col("n.*"))
+      .repartition(1).sortWithinPartitions("WAY_ID", "ID")
 
     writeExcel(resInfo, targetPath + "//info.xlsx")
     writeExcel(resTags, targetPath + "//tags.xlsx")

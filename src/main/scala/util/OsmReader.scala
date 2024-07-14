@@ -28,8 +28,8 @@ object OsmReader {
     df.select(
       df.columns.map(col) :+
         posexplode_outer(col("WAY")).as(Seq("NODE_POS", "NODE_ID")): _ *)
-      .withColumnRenamed("WAY_ID", "ID")
-      .withColumnRenamed("WAY_TYPE", "TYPE")
+      .withColumnRenamed("ID", "WAY_ID")
+      .withColumnRenamed("TYPE", "WAY_TYPE")
       .drop("WAY")
   }
 
@@ -59,7 +59,7 @@ object OsmReader {
 
   def name(osm: DataFrame, ids: Seq[Long] = Nil): DataFrame = {
     val df: DataFrame = if (ids.nonEmpty) osm.where(col("ID").isin(ids: _*)) else osm
-    val dfName: DataFrame = tagsExplode(osm ,ids).where(lower(trim(col("TAG_KEY"))).isin("name", "name:ru", "name:en"))
+    val dfName: DataFrame = tagsExplode(osm ,ids)
       .groupBy(col("ID"))
       .agg(
         max(when(lower(trim(col("TAG_KEY"))) === "name",         col("TAG_VALUE"))).as("NAME"),
