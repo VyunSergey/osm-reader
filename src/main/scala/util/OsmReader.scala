@@ -62,7 +62,7 @@ object OsmReader {
     val dfName: DataFrame = tagsExplode(osm ,ids)
       .groupBy(col("ID"))
       .agg(
-        max(when(lower(trim(col("TAG_KEY"))) === "type",             col("TAG_VALUE"))).as("TYPE"),
+        max(when(lower(trim(col("TAG_KEY"))) === "type",             col("TAG_VALUE"))).as("GEOMETRY_TYPE"),
         max(when(lower(trim(col("TAG_KEY"))) === "name",             col("TAG_VALUE"))).as("NAME"),
         max(when(lower(trim(col("TAG_KEY"))) === "name:ru",          col("TAG_VALUE"))).as("NAME_RU"),
         max(when(lower(trim(col("TAG_KEY"))) === "name:en",          col("TAG_VALUE"))).as("NAME_EN"),
