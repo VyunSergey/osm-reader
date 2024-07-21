@@ -7,9 +7,9 @@ trait SparkConnection {
     SparkSession
       .builder()
       .appName(name)
-      .config("spark.master", "local[8]")
-      .config("spark.driver.memory", "4gb")
-      .config("spark.driver.maxResultSize", "4gb")
+      .config("spark.master", "local[16]")
+      .config("spark.driver.memory", "8gb")
+      .config("spark.driver.maxResultSize", "8gb")
       .config("spark.executor.memory", "8gb")
       .getOrCreate()
 
