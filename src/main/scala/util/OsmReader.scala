@@ -15,12 +15,12 @@ object OsmReader {
 
   def nodes(osm: DataFrame, ids: Seq[Long] = Nil): DataFrame = {
     val nodes: DataFrame = osm.where(col("TYPE") === 0)
-    if (ids.nonEmpty) nodes.where(col("ID").isin(ids: _*)) else nodes
+    name(if (ids.nonEmpty) nodes.where(col("ID").isin(ids: _*)) else nodes)
   }
 
   def ways(osm: DataFrame, ids: Seq[Long] = Nil): DataFrame = {
     val ways: DataFrame = osm.where(col("TYPE") === 1)
-    if (ids.nonEmpty) ways.where(col("ID").isin(ids: _*)) else ways
+    name(if (ids.nonEmpty) ways.where(col("ID").isin(ids: _*)) else ways)
   }
 
   def waysExplode(osm: DataFrame, ids: Seq[Long] = Nil): DataFrame = {
@@ -35,7 +35,7 @@ object OsmReader {
 
   def relations(osm: DataFrame, ids: Seq[Long] = Nil): DataFrame = {
     val rels: DataFrame = osm.where(col("TYPE") === 2)
-    if (ids.nonEmpty) rels.where(col("ID").isin(ids: _*)) else rels
+    name(if (ids.nonEmpty) rels.where(col("ID").isin(ids: _*)) else rels)
   }
 
   def relationsExplode(osm: DataFrame, ids: Seq[Long] = Nil): DataFrame = {
@@ -66,6 +66,11 @@ object OsmReader {
         max(when(lower(trim(col("TAG_KEY"))) === "name:ru",      col("TAG_VALUE"))).as("NAME_RU"),
         max(when(lower(trim(col("TAG_KEY"))) === "name:en",      col("TAG_VALUE"))).as("NAME_EN"),
         max(when(lower(trim(col("TAG_KEY"))) === "addr:country", col("TAG_VALUE"))).as("ADDR_COUNTRY"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:region",  col("TAG_VALUE"))).as("ADDR_REGION"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:city",    col("TAG_VALUE"))).as("ADDR_CITY"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:street",  col("TAG_VALUE"))).as("ADDR_STREET"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:house",   col("TAG_VALUE"))).as("ADDR_HOUSE"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:flat",    col("TAG_VALUE"))).as("ADDR_FLAT"),
         max(when(lower(trim(col("TAG_KEY"))) === "border_type",  col("TAG_VALUE"))).as("BORDER_TYPE"),
         max(when(lower(trim(col("TAG_KEY"))) === "admin_level",  col("TAG_VALUE"))).as("ADMIN_LEVEL"),
         max(when(lower(trim(col("TAG_KEY"))) === "boundary",     col("TAG_VALUE"))).as("BOUNDARY")
