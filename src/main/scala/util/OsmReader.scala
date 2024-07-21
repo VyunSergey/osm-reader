@@ -62,18 +62,23 @@ object OsmReader {
     val dfName: DataFrame = tagsExplode(osm ,ids)
       .groupBy(col("ID"))
       .agg(
-        max(when(lower(trim(col("TAG_KEY"))) === "name",         col("TAG_VALUE"))).as("NAME"),
-        max(when(lower(trim(col("TAG_KEY"))) === "name:ru",      col("TAG_VALUE"))).as("NAME_RU"),
-        max(when(lower(trim(col("TAG_KEY"))) === "name:en",      col("TAG_VALUE"))).as("NAME_EN"),
-        max(when(lower(trim(col("TAG_KEY"))) === "addr:country", col("TAG_VALUE"))).as("ADDR_COUNTRY"),
-        max(when(lower(trim(col("TAG_KEY"))) === "addr:region",  col("TAG_VALUE"))).as("ADDR_REGION"),
-        max(when(lower(trim(col("TAG_KEY"))) === "addr:city",    col("TAG_VALUE"))).as("ADDR_CITY"),
-        max(when(lower(trim(col("TAG_KEY"))) === "addr:street",  col("TAG_VALUE"))).as("ADDR_STREET"),
-        max(when(lower(trim(col("TAG_KEY"))) === "addr:house",   col("TAG_VALUE"))).as("ADDR_HOUSE"),
-        max(when(lower(trim(col("TAG_KEY"))) === "addr:flat",    col("TAG_VALUE"))).as("ADDR_FLAT"),
-        max(when(lower(trim(col("TAG_KEY"))) === "border_type",  col("TAG_VALUE"))).as("BORDER_TYPE"),
-        max(when(lower(trim(col("TAG_KEY"))) === "admin_level",  col("TAG_VALUE"))).as("ADMIN_LEVEL"),
-        max(when(lower(trim(col("TAG_KEY"))) === "boundary",     col("TAG_VALUE"))).as("BOUNDARY")
+        max(when(lower(trim(col("TAG_KEY"))) === "type",             col("TAG_VALUE"))).as("TYPE"),
+        max(when(lower(trim(col("TAG_KEY"))) === "name",             col("TAG_VALUE"))).as("NAME"),
+        max(when(lower(trim(col("TAG_KEY"))) === "name:ru",          col("TAG_VALUE"))).as("NAME_RU"),
+        max(when(lower(trim(col("TAG_KEY"))) === "name:en",          col("TAG_VALUE"))).as("NAME_EN"),
+        max(when(lower(trim(col("TAG_KEY"))) === "official_name",    col("TAG_VALUE"))).as("OFFICIAL_NAME"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:country",     col("TAG_VALUE"))).as("ADDR_COUNTRY"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:region",      col("TAG_VALUE"))).as("ADDR_REGION"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:city",        col("TAG_VALUE"))).as("ADDR_CITY"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:street",      col("TAG_VALUE"))).as("ADDR_STREET"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:house",       col("TAG_VALUE"))).as("ADDR_HOUSE"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:housenumber", col("TAG_VALUE"))).as("ADDR_HOUSE_NUMBER"),
+        max(when(lower(trim(col("TAG_KEY"))) === "addr:flat",        col("TAG_VALUE"))).as("ADDR_FLAT"),
+        max(when(lower(trim(col("TAG_KEY"))) === "border_type",      col("TAG_VALUE"))).as("BORDER_TYPE"),
+        max(when(lower(trim(col("TAG_KEY"))) === "admin_level",      col("TAG_VALUE"))).as("ADMIN_LEVEL"),
+        max(when(lower(trim(col("TAG_KEY"))) === "boundary",         col("TAG_VALUE"))).as("BOUNDARY"),
+        max(when(lower(trim(col("TAG_KEY"))) === "building",         col("TAG_VALUE"))).as("BUILDING"),
+        max(when(lower(trim(col("TAG_KEY"))) === "building:levels",  col("TAG_VALUE"))).as("BUILDING_LEVELS")
       )
 
     df.join(dfName, Seq("ID"), "inner")
